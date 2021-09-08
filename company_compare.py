@@ -70,8 +70,45 @@ class inter_sheet_compute(object):
         '''
         return open_book_credit/income
 
+    @staticmethod
+    def ROA(net_profit, total_asset):
+        '''
 
+        :param net_profit: 净利润
+        :param total_asset: 总资产
+        :return: ROA 总资产回报率
+        '''
+        return net_profit/total_asset
 
+    @staticmethod
+    def ROI(net_profit, total_investment):
+        '''
+
+        :param net_profit: 净利润
+        :param total_investment: 总投资额
+        :return: 投资回报率
+        '''
+        return net_profit/total_investment
+
+    @staticmethod
+    def  net_profit_margin(net_profit, income):
+        '''
+        盈利能力
+        :param net_profit: 净利率
+        :param income: 营业收入
+        :return: 净利率
+        '''
+        return net_profit/income
+
+    @staticmethod
+    def gross_margin(gross_profit, income):
+        '''
+        盈利能力
+        :param gross_profit: 毛利率
+        :param income: 营业收入
+        :return: 毛利率
+        '''
+        return gross_profit/income
 
 if __name__ == "__main__":
     pass
