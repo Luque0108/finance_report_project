@@ -21,6 +21,11 @@ class lrb_quota(object):
     def __init__(self, lrb_df):
         self.lrb = lrb_df
 
+    @property
+    def income(self):
+        self.income = self.lrb['营业收入(万元)']
+        return self.income
+
 
 class zcfzb_quota(object):
     def __init__(self, zcfzb_df):
@@ -49,6 +54,23 @@ class zcfzb_quota(object):
 class xjllb_quota(object):
     def __init__(self, xjllb_df):
         self.xjllb = xjllb_df
+
+
+class inter_sheet_compute(object):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def open_book_credit_income_ratio(open_book_credit, income):
+        '''
+
+        :param open_book_credit: 应收账款
+        :param income: 营业收入
+        :return:对应比例
+        '''
+        return open_book_credit/income
+
+
 
 
 if __name__ == "__main__":
