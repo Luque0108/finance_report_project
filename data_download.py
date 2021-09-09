@@ -2,12 +2,8 @@
 # -*- coding:utf-8 -*-
 # author:Luqueli@wisers.com time:2021/9/7
 
-import re
 import urllib.request
-from pathlib import Path
 import pandas as pd
-import xlwt
-from bs4 import BeautifulSoup
 from time import sleep
 import os
 
@@ -37,6 +33,6 @@ def sheet_load(stock_num: list, sheet_type: str):
 
 
 if __name__ == "__main__":
-    stock_num = ['601012', '002027', '002304']
-    for sheet_type in ['lrb', 'xjllb', 'zcfzb']:
-        sheet_load(stock_num, sheet_type)
+    stock_no = ['601012', '002027', '002304']
+    for sheet_ty in ['lrb', 'xjllb', 'zcfzb']:
+        sheet_load(stock_no, sheet_ty)

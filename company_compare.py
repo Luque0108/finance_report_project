@@ -2,16 +2,27 @@
 # -*- coding:utf-8 -*-
 # author:Luqueli@wisers.com time:2021/9/7
 import pandas as pd
+import numpy as np
 
 
 # 导入对应代码的三张表
-def sheet_load(stock):
+def sheet_load(stock: str):
     sheet_type = ['lrb', 'zcfzb', 'xjllb']
-    df_list = [pd.read_csv('./all_sheets/' + stock + '_' + f'{sheet_type}.csv') for sheet_type in sheet_type]
-    lrb_df = df_list[0]
-    zcfzb_df = df_list[1]
-    xjllb_df = df_list[2]
+    df_list = [pd.read_csv('./all_sheets/' + stock + '_' + f'{sheet_type}.csv', encoding='gbk') for sheet_type in sheet_type]
+    lrb_df = df_list[0].T
+    zcfzb_df = df_list[1].T
+    xjllb_df = df_list[2].T
     return lrb_df, zcfzb_df, xjllb_df
+
+
+def annul_filter(df):
+    """
+    将年报数据筛选出来
+    :param df: df
+    :return: df
+    """
+    df = df[df.index.map(lambda x : x[-5:]) == '12-31']
+    return df
 
 
 def if_ratio(ratio, standard):
@@ -175,4 +186,8 @@ class inter_sheet_compute(object):
 
 
 if __name__ == "__main__":
-    pass
+    lrb, zcfzb, xjllb = sheet_load('601012')
+    lrb = annul_filter(lrb)
+    zcfzb = annul_filter(zcfzb)
+    xjllb = annul_filter(xjllb)
+    print('done')
