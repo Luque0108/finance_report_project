@@ -17,28 +17,34 @@ def sheet_load(stock):
     return lrb_df, zcfzb_df, xjllb_df
 
 
+def if_ratio(ratio, standard):
+    '''
+
+    :param ratio: 比率
+    :param standard: 指标
+    :return: 判断是否超过指标
+    '''
+    if ratio > standard:
+        if_excel = True
+    else:
+        if_excel = False
+    return if_excel
+
+
 class lrb_quota(object):
     def __init__(self, lrb_df):
         self.lrb = lrb_df
 
     @property
-    def income(self):
-        self.income = self.lrb['营业收入(万元)']
-        return self.income
+    def _operating_revenue(self):
+        self.operating_revenue = self.lrb['营业收入(万元)']
+        return self._operating_revenue
+
 
 
 class zcfzb_quota(object):
     def __init__(self, zcfzb_df):
         self.zcfzb = zcfzb_df
-
-    @staticmethod
-    def short_term_debt_crisis(zcfzb_df):
-        '''
-        短期负债危机 = 货币资金占流动性负债的占比
-        :param zcfzb_df:
-        :return: 短期负债偿还能力占比
-        '''
-        return zcfzb_df['货币资金(万元)']/zcfzb_df['流动负债合计(万元)']
 
     @property
     def _liability_interest(self):
@@ -49,6 +55,55 @@ class zcfzb_quota(object):
         self.liability_interest = self.zcfzb['长期借款(万元)'] + self.zcfzb['应付债券(万元)'] \
                              + self.zcfzb['一年内到期的非流动负债(万元)'] + self.zcfzb['短期借款(万元)'] + self.zcfzb['交易性金融负债(万元)']
         return self.liability_interest
+
+    @property
+    def _total_asset(self):
+        '''
+
+        :return:资产总结
+        '''
+        self.total_asset = self.zcfzb['资产总计(万元)']
+        return self._total_asset
+
+    @property
+    def _currency(self):
+        '''
+
+        :return:货币资金
+        '''
+        self.currency = self.zcfzb['货币资金(万元)']
+        return self._currency
+
+    @property
+    def _total_debt(self):
+        '''
+
+        :return:负债合计
+        '''
+        self.total_debt = self.zcfzb['负债合计(万元)']
+        return self._total_debt
+
+    @staticmethod
+    def short_term_debt_crisis_ratio(zcfzb_df):
+        '''
+        短期负债危机 = 货币资金占流动性负债的占比
+        :param zcfzb_df:
+        :return: 短期负债偿还能力占比
+        '''
+        return zcfzb_df['货币资金(万元)'] / zcfzb_df['流动负债合计(万元)']
+
+    @staticmethod
+    def high_currency_ratio(currency, total_asset, high_ratio_standard=.2):
+        ratio = currency / total_asset
+        if_high = if_ratio(ratio, high_ratio_standard)
+        return if_high
+
+    @staticmethod
+    def high_debt_asset_ratio(debt , total_asset, high_ratio_standard=.7):
+        ratio = debt / total_asset
+        if_high = if_ratio(ratio, high_ratio_standard)
+        return if_high
+
 
 
 class xjllb_quota(object):
@@ -61,14 +116,14 @@ class inter_sheet_compute(object):
         pass
 
     @staticmethod
-    def open_book_credit_income_ratio(open_book_credit, income):
+    def open_book_credit_income_ratio(open_book_credit, operating_revenue):
         '''
 
         :param open_book_credit: 应收账款
-        :param income: 营业收入
+        :param operating_revenue: 营业收入
         :return:对应比例
         '''
-        return open_book_credit/income
+        return open_book_credit/operating_revenue
 
     @staticmethod
     def ROA(net_profit, total_asset):
@@ -91,24 +146,38 @@ class inter_sheet_compute(object):
         return net_profit/total_investment
 
     @staticmethod
-    def  net_profit_margin(net_profit, income):
+    def net_profit_margin(net_profit, operating_revenue):
         '''
         盈利能力
         :param net_profit: 净利率
-        :param income: 营业收入
+        :param operating_revenue: 营业收入
         :return: 净利率
         '''
-        return net_profit/income
+        return net_profit/operating_revenue
 
     @staticmethod
-    def gross_margin(gross_profit, income):
+    def gross_margin(gross_profit, operating_revenue):
         '''
         盈利能力
         :param gross_profit: 毛利率
-        :param income: 营业收入
+        :param operating_revenue: 营业收入
         :return: 毛利率
         '''
-        return gross_profit/income
+        return gross_profit/operating_revenue
+
+    @staticmethod
+    def high_scale_ratio(currency, operating_revenue, standard=1):
+        '''
+
+        :param currency: 货币资金
+        :param operating_revenue:营业收入
+        :param standard:
+        :return: 是否超标
+        '''
+        ratio = currency / operating_revenue
+        if_high = if_ratio(ratio, standard)
+        return if_high
+
 
 if __name__ == "__main__":
     pass
