@@ -18,10 +18,15 @@ def sheet_load(stock: str):
 def annul_filter(df):
     """
     将年报数据筛选出来
-    :param df: df
+    :param df:
     :return: df
     """
+    cols = list(df.iloc[0,:])
     df = df[df.index.map(lambda x : x[-5:]) == '12-31']
+    df.columns = cols
+    df = df.where(df!='--', np.nan)
+    for col in df.columns:
+        df[col] = df[col].astype("float")
     return df
 
 
@@ -47,6 +52,11 @@ class lrb_quota(object):
     def _operating_revenue(self):
         self.operating_revenue = self.lrb['营业收入(万元)']
         return self._operating_revenue
+
+    @property
+    def _operating_cost(self):
+        self.operating_cost = self.lrb['营业成本(万元)']
+        return self._operating_cost
 
 
 class zcfzb_quota(object):
@@ -89,6 +99,15 @@ class zcfzb_quota(object):
         """
         self.total_debt = self.zcfzb['负债合计(万元)']
         return self._total_debt
+
+    @property
+    def _inventory(self):
+        """
+
+        :return: 存货
+        """
+        self.inventory = self.zcfzb['存货(万元)']
+        return self._inventory
 
     @staticmethod
     def short_term_debt_crisis_ratio(zcfzb_df):
@@ -183,6 +202,19 @@ class inter_sheet_compute(object):
         ratio = currency / operating_revenue
         if_high = if_ratio(ratio, standard)
         return if_high
+
+    @staticmethod
+    def inventory_turnover_ratio(inventory, operating_cost):
+        """
+
+        :param inventory: 存货
+        :param operating_cost: 营业成本
+        :return: 存货周转率
+        """
+        pass
+        avg_inventory = (zcfzb['存货(万元)'][0:-1].values+zcfzb['存货(万元)'][1:].values)/2
+        inventory_turnover_ratio = operating_cost[:-1].divide(pd.Series(avg_inventory,index=operating_cost[:-1].index))
+        return inventory_turnover_ratio
 
 
 if __name__ == "__main__":
