@@ -211,8 +211,7 @@ class inter_sheet_compute(object):
         :param operating_cost: 营业成本
         :return: 存货周转率
         """
-        pass
-        avg_inventory = (zcfzb['存货(万元)'][0:-1].values+zcfzb['存货(万元)'][1:].values)/2
+        avg_inventory = (inventory[0:-1].values+inventory[1:].values)/2
         inventory_turnover_ratio = operating_cost[:-1].divide(pd.Series(avg_inventory,index=operating_cost[:-1].index))
         return inventory_turnover_ratio
 
