@@ -4,15 +4,27 @@
 import pandas as pd
 import numpy as np
 
-
 # 导入对应代码的三张表
 def sheet_load(stock: str):
-    sheet_type = ['lrb', 'zcfzb', 'xjllb']
-    df_list = [pd.read_csv('./all_sheets/' + stock + '_' + f'{sheet_type}.csv', encoding='gbk') for sheet_type in sheet_type]
+    sheet_type_list = ['lrb', 'zcfzb', 'xjllb']
+    df_list = [pd.read_csv('./all_sheets/' + stock + '_' + f'{sheet_type}.csv', encoding='gbk')
+               for sheet_type in sheet_type_list]
     lrb_df = df_list[0].T
     zcfzb_df = df_list[1].T
     xjllb_df = df_list[2].T
-    return lrb_df, zcfzb_df, xjllb_df
+    df_list = []
+    for df in [lrb_df, zcfzb_df, xjllb_df]:
+        cols = list(df.iloc[0, :])
+        df.columns = cols
+        df = df.iloc[1:-1, :]
+        df = df.mask(df == '--')
+        for col in df.columns:
+            try:
+                df[col] = df[col].astype("float")
+            except:
+                print(f'{col}出错未能转化成float')
+        df_list.append(df)
+    return df_list[0], df_list[1], df_list[2]
 
 
 def annul_filter(df):
@@ -21,12 +33,7 @@ def annul_filter(df):
     :param df:
     :return: df
     """
-    cols = list(df.iloc[0,:])
     df = df[df.index.map(lambda x : x[-5:]) == '12-31']
-    df.columns = cols
-    df = df.where(df!='--', np.nan)
-    for col in df.columns:
-        df[col] = df[col].astype("float")
     return df
 
 
